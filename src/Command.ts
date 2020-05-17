@@ -218,9 +218,9 @@ export abstract class Command {
             });
         }
 
-        const subCommands = this.getSubcommands();
+        const subCommands = this.getSubcommands().filter(c => !c.options?.ownerOnly);
 
-        if (subCommands) {
+        if (subCommands.length) {
             embed.fields.push({
                 name: "Subcomands",
                 value: subCommands.map(s => s.getUsage(prefix)).join("\n")

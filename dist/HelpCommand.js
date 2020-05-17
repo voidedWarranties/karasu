@@ -61,7 +61,7 @@ class CommandSubCommand extends Command_1.Command {
     run(msg, args) {
         const command = this.bot.commandRegistry.resolve(args[0]);
         if (!command)
-            msg.channel.createMessage("No command found.");
+            return "No command found.";
         msg.channel.createMessage({ embed: command.createEmbed(msg) });
     }
 }

@@ -58,7 +58,7 @@ class CommandSubCommand extends Command {
 
     run(msg: Eris.Message, args: string[]) {
         const command = this.bot.commandRegistry.resolve(args[0]);
-        if (!command) msg.channel.createMessage("No command found.");
+        if (!command) return "No command found.";
 
         msg.channel.createMessage({ embed: command.createEmbed(msg) });
     }

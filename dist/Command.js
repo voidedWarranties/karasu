@@ -146,8 +146,8 @@ class Command {
                 value: this.options.aliases.map(a => `${prefix}${a}`).join(", ")
             });
         }
-        const subCommands = this.getSubcommands();
-        if (subCommands) {
+        const subCommands = this.getSubcommands().filter(c => { var _a; return !((_a = c.options) === null || _a === void 0 ? void 0 : _a.ownerOnly); });
+        if (subCommands.length) {
             embed.fields.push({
                 name: "Subcomands",
                 value: subCommands.map(s => s.getUsage(prefix)).join("\n")
