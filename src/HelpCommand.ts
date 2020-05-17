@@ -16,7 +16,7 @@ export default class HelpCommand extends Command {
     async run(msg: Eris.Message) {
         const categories = this.bot.extendedOptions.categories;
         const commands = this.bot.commandRegistry.commands;
-        const prefix = this.bot.resolvePrefix(msg)[0];
+        const prefix = this.bot.resolvePrefix(msg)[0].replace("`", "\\`");
 
         if (categories.length) {
             var embed = {
