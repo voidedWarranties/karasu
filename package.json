@@ -8,8 +8,9 @@
   ],
   "license": "WTFPL",
   "scripts": {
+    "build": "tsc",
     "lint": "eslint . --fix",
-    "postinstall": "tsc",
+    "prepare": "npm run build",
     "docs": "typedoc --out docs src"
   },
   "peerDependencies": {},
