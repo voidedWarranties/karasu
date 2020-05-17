@@ -48,7 +48,9 @@ class CommandRegistry {
                             chokidar_1.default.watch(entryPath).on("change", () => {
                                 this.bot.log.info(`Reloading command in: ${entryPath}`);
                                 delete require.cache[require.resolve(entryPath)];
-                                const CommandConstructor = require(entryPath) || require(entryPath).default;
+                                var CommandConstructor = require(entryPath);
+                                if (CommandConstructor.default)
+                                    CommandConstructor = CommandConstructor.default;
                                 const commandInstance = new CommandConstructor(this.bot);
                                 this.unregister(commandInstance.label);
                                 this.register(commandInstance);
