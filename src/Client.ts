@@ -1,4 +1,5 @@
 import Eris from "eris";
+require("eris-additions")(Eris);
 import CommandRegistry from "./CommandRegistry";
 import path from "path";
 import Logger from "another-logger";

@@ -25,6 +25,7 @@
     "another-logger": "^2.0.1",
     "chokidar": "^3.4.0",
     "eris": "^0.13.1",
+    "eris-additions": "^1.4.1",
     "readdirp": "^3.4.0",
     "timestring": "^6.0.0"
   }

@@ -324,6 +324,23 @@ emoji-regex@^8.0.0:
   resolved "https://registry.yarnpkg.com/emoji-regex/-/emoji-regex-8.0.0.tgz#e818fd69ce5ccfcb404594f842963bf53164cc37"
   integrity sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==
 
+eris-additions@^1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/eris-additions/-/eris-additions-1.4.1.tgz#afa7d5846386a5bc65fc623350edb09a77537e17"
+  integrity sha512-ZaAvQKZjXWOJB653RCKsdYMgJH+vXqdjjv/wTVtmFTUvaRdehON3x/yU/YseQwpoTwQVhOBLofTu6fdz0KzZmQ==
+  dependencies:
+    eris "^0.12.0"
+
+eris@^0.12.0:
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/eris/-/eris-0.12.0.tgz#4bcb0d4705fe188a59baec0baf6b31fcf5c9f809"
+  integrity sha512-LIw+uEOfHFCdE9BXL3wqxwml+74TJ7eMiMcyeW/jsmiWndDzybA/WlakiXAAnyg9a5OULOkHlKLOFsl+EgoZag==
+  dependencies:
+    ws "^7.2.1"
+  optionalDependencies:
+    opusscript "^0.0.7"
+    tweetnacl "^1.0.1"
+
 eris@^0.13.1:
   version "0.13.1"
   resolved "https://registry.yarnpkg.com/eris/-/eris-0.13.1.tgz#cdf6af407faafefee6242b7785297db9e14d484c"

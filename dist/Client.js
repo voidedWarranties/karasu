@@ -21,6 +21,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Client = void 0;
 const eris_1 = __importDefault(require("eris"));
+require("eris-additions")(eris_1.default);
 const CommandRegistry_1 = __importDefault(require("./CommandRegistry"));
 const path_1 = __importDefault(require("path"));
 const another_logger_1 = __importDefault(require("another-logger"));
