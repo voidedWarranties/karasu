@@ -68,11 +68,11 @@ function parseArgs(client, msg, declared, given) {
     return __awaiter(this, void 0, void 0, function* () {
         const parsedArgs = [];
         for (const idx in declared) {
-            if (!given[0]) {
+            const arg = declared[idx];
+            if (!given[0] && !arg.optional) {
                 msg.channel.createMessage(`Not enough arguments, ${declared.length} required`);
                 return;
             }
-            const arg = declared[idx];
             if (!client.argParsers[arg.type])
                 throw new ReferenceError(`Parser for argument type ${arg.type} does not exist.`);
             const parsed = yield client.argParsers[arg.type](msg, given[0]);
@@ -83,7 +83,6 @@ function parseArgs(client, msg, declared, given) {
                 }
                 else {
                     parsedArgs.push(undefined);
-                    return;
                 }
             }
             else {
