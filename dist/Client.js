@@ -94,9 +94,11 @@ class Client extends eris_1.default.Client {
      * @param msg Message to resolve prefix based on
      */
     resolvePrefix(msg) {
-        const prefixResolvable = this.extendedOptions.prefix;
-        var prefix = typeof prefixResolvable === "function" ? prefixResolvable(msg) : [prefixResolvable];
-        return prefix.map(p => p.replace("@mention", this.user.mention));
+        return __awaiter(this, void 0, void 0, function* () {
+            const prefixResolvable = this.extendedOptions.prefix;
+            var prefix = typeof prefixResolvable === "function" ? yield prefixResolvable(msg) : [prefixResolvable];
+            return prefix.map(p => p.replace("@mention", this.user.mention));
+        });
     }
 }
 exports.Client = Client;

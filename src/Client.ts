@@ -142,9 +142,9 @@ export class Client extends Eris.Client {
      * Uses {@link ExtendedOptions.prefix} to find the prefix
      * @param msg Message to resolve prefix based on
      */
-    resolvePrefix(msg: Eris.Message) {
+    async resolvePrefix(msg: Eris.Message) {
         const prefixResolvable = this.extendedOptions.prefix;
-        var prefix = typeof prefixResolvable === "function" ? prefixResolvable(msg) : [prefixResolvable];
+        var prefix = typeof prefixResolvable === "function" ? await prefixResolvable(msg) : [prefixResolvable];
 
         return prefix.map(p => p.replace("@mention", this.user.mention));
     }

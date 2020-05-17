@@ -101,5 +101,5 @@ export declare class Client extends Eris.Client {
      * Uses {@link ExtendedOptions.prefix} to find the prefix
      * @param msg Message to resolve prefix based on
      */
-    resolvePrefix(msg: Eris.Message): any;
+    resolvePrefix(msg: Eris.Message): Promise<any>;
 }

@@ -130,30 +130,32 @@ class Command {
      */
     createEmbed(msg) {
         var _a, _b;
-        const prefix = this.bot.resolvePrefix(msg)[0].replace("`", "\\`");
-        var embed = {
-            title: `${prefix}${this.label}`,
-            description: ((_a = this.options) === null || _a === void 0 ? void 0 : _a.description) || "*No description.*",
-            fields: []
-        };
-        embed.fields.push({
-            name: "Usage",
-            value: this.getUsage(prefix)
+        return __awaiter(this, void 0, void 0, function* () {
+            const prefix = (yield this.bot.resolvePrefix(msg))[0].replace("`", "\\`");
+            var embed = {
+                title: `${prefix}${this.label}`,
+                description: ((_a = this.options) === null || _a === void 0 ? void 0 : _a.description) || "*No description.*",
+                fields: []
+            };
+            embed.fields.push({
+                name: "Usage",
+                value: this.getUsage(prefix)
+            });
+            if ((_b = this.options) === null || _b === void 0 ? void 0 : _b.aliases) {
+                embed.fields.push({
+                    name: "Aliases",
+                    value: this.options.aliases.map(a => `${prefix}${a}`).join(", ")
+                });
+            }
+            const subCommands = this.getSubcommands().filter(c => { var _a; return !((_a = c.options) === null || _a === void 0 ? void 0 : _a.ownerOnly); });
+            if (subCommands.length) {
+                embed.fields.push({
+                    name: "Subcomands",
+                    value: subCommands.map(s => s.getUsage(prefix)).join("\n")
+                });
+            }
+            return embed;
         });
-        if ((_b = this.options) === null || _b === void 0 ? void 0 : _b.aliases) {
-            embed.fields.push({
-                name: "Aliases",
-                value: this.options.aliases.map(a => `${prefix}${a}`).join(", ")
-            });
-        }
-        const subCommands = this.getSubcommands().filter(c => { var _a; return !((_a = c.options) === null || _a === void 0 ? void 0 : _a.ownerOnly); });
-        if (subCommands.length) {
-            embed.fields.push({
-                name: "Subcomands",
-                value: subCommands.map(s => s.getUsage(prefix)).join("\n")
-            });
-        }
-        return embed;
     }
 }
 exports.Command = Command;

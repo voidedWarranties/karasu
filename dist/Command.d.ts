@@ -106,9 +106,9 @@ export declare abstract class Command {
      * Creates an embed documenting this command (and its subcommands, etc.) usage.
      * @param msg Message requesting the embed, used to resolve the prefix
      */
-    createEmbed(msg: Eris.Message): {
+    createEmbed(msg: Eris.Message): Promise<{
         title: string;
         description: string;
         fields: any[];
-    };
+    }>;
 }

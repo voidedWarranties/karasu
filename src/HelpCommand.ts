@@ -16,7 +16,7 @@ export default class HelpCommand extends Command {
     async run(msg: Eris.Message) {
         const categories = this.bot.extendedOptions.categories;
         const commands = this.bot.commandRegistry.commands;
-        const prefix = this.bot.resolvePrefix(msg)[0].replace("`", "\\`");
+        const prefix = (await this.bot.resolvePrefix(msg))[0].replace("`", "\\`");
 
         if (categories.length) {
             var embed = {
@@ -56,10 +56,10 @@ class CommandSubCommand extends Command {
         });
     }
 
-    run(msg: Eris.Message, args: string[]) {
+    async run(msg: Eris.Message, args: string[]) {
         const command = this.bot.commandRegistry.resolve(args[0]);
         if (!command) return "No command found.";
 
-        msg.channel.createMessage({ embed: command.createEmbed(msg) });
+        msg.channel.createMessage({ embed: await command.createEmbed(msg) });
     }
 }

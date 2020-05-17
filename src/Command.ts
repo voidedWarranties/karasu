@@ -197,8 +197,8 @@ export abstract class Command {
      * Creates an embed documenting this command (and its subcommands, etc.) usage.
      * @param msg Message requesting the embed, used to resolve the prefix
      */
-    createEmbed(msg: Eris.Message) {
-        const prefix = this.bot.resolvePrefix(msg)[0].replace("`", "\\`");
+    async createEmbed(msg: Eris.Message) {
+        const prefix = (await this.bot.resolvePrefix(msg))[0].replace("`", "\\`");
 
         var embed = {
             title: `${prefix}${this.label}`,

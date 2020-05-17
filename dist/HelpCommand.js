@@ -23,7 +23,7 @@ class HelpCommand extends Command_1.Command {
         return __awaiter(this, void 0, void 0, function* () {
             const categories = this.bot.extendedOptions.categories;
             const commands = this.bot.commandRegistry.commands;
-            const prefix = this.bot.resolvePrefix(msg)[0].replace("`", "\\`");
+            const prefix = (yield this.bot.resolvePrefix(msg))[0].replace("`", "\\`");
             if (categories.length) {
                 var embed = {
                     title: "Help",
@@ -59,9 +59,11 @@ class CommandSubCommand extends Command_1.Command {
         });
     }
     run(msg, args) {
-        const command = this.bot.commandRegistry.resolve(args[0]);
-        if (!command)
-            return "No command found.";
-        msg.channel.createMessage({ embed: command.createEmbed(msg) });
+        return __awaiter(this, void 0, void 0, function* () {
+            const command = this.bot.commandRegistry.resolve(args[0]);
+            if (!command)
+                return "No command found.";
+            msg.channel.createMessage({ embed: yield command.createEmbed(msg) });
+        });
     }
 }
