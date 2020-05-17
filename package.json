@@ -10,7 +10,6 @@
   "scripts": {
     "build": "tsc",
     "lint": "eslint . --fix",
-    "prepack": "npm run build",
     "docs": "typedoc --out docs src"
   },
   "peerDependencies": {},
