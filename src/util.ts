@@ -35,13 +35,19 @@ export async function parseArgs(client: Client, msg: Eris.Message, declared: Arg
 
         if (!client.argParsers[arg.type]) throw new ReferenceError(`Parser for argument type ${arg.type} does not exist.`);
         
-        const parsed = await client.argParsers[arg.type](msg, given.shift());
+        const parsed = await client.argParsers[arg.type](msg, given[0]);
 
         if (!parsed) {
-            msg.channel.createMessage(`Argument ${idx}: Required type ${arg.type}`);
-            return;
+            if (!arg.optional) {
+                msg.channel.createMessage(`Argument ${idx}: Required type ${arg.type}`);
+                return;
+            } else {
+                parsedArgs.push(undefined);
+                return;
+            }
         } else {
             parsedArgs.push(parsed);
+            given.shift();
         }
     }
 

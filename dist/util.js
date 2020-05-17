@@ -75,13 +75,20 @@ function parseArgs(client, msg, declared, given) {
             const arg = declared[idx];
             if (!client.argParsers[arg.type])
                 throw new ReferenceError(`Parser for argument type ${arg.type} does not exist.`);
-            const parsed = yield client.argParsers[arg.type](msg, given.shift());
+            const parsed = yield client.argParsers[arg.type](msg, given[0]);
             if (!parsed) {
-                msg.channel.createMessage(`Argument ${idx}: Required type ${arg.type}`);
-                return;
+                if (!arg.optional) {
+                    msg.channel.createMessage(`Argument ${idx}: Required type ${arg.type}`);
+                    return;
+                }
+                else {
+                    parsedArgs.push(undefined);
+                    return;
+                }
             }
             else {
                 parsedArgs.push(parsed);
+                given.shift();
             }
         }
         return {

@@ -51,6 +51,10 @@ export interface Argument {
      * The name of the argument, to be used in the default help command
      */
     name?: string;
+    /**
+     * Whether this argument is optional
+     */
+    optional?: boolean;
 }
 export declare abstract class Command {
     bot: Client;
