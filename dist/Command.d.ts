@@ -40,6 +40,10 @@ export interface CommandOptions {
      * and returning a boolean indicating whether the user meets the requirements.
      */
     requirements?: Function;
+    /**
+     * A list of strings representing how to use this command.
+     */
+    usages?: string[];
 }
 export interface Argument {
     /**
@@ -94,14 +98,16 @@ export declare abstract class Command {
      */
     getSubcommands(): Command[];
     /**
-     * Creates a string for the usage of the command,
-     * based on the arguments declared and their names.
-     * If executed on a subcommand, the parent is found recursively
-     * to make sure the entire command (and not just subcommand) is printed.
+     * Creates a string representing the "base command"
+     * For subcommands, this includes all of the parent commands.
      *
-     * @param prefix The prefix to put in the message
+     * @param prefix The prefix to put before the command
      */
-    getUsage(prefix: string): string;
+    getBaseCommand(prefix: string): string;
+    /**
+     * Adds a prefix to every usage this command has.
+     */
+    getUsagePrefixed(prefix: string): string[];
     /**
      * Creates an embed documenting this command (and its subcommands, etc.) usage.
      * @param msg Message requesting the embed, used to resolve the prefix

@@ -107,29 +107,33 @@ class Command {
         return subCommands;
     }
     /**
-     * Creates a string for the usage of the command,
-     * based on the arguments declared and their names.
-     * If executed on a subcommand, the parent is found recursively
-     * to make sure the entire command (and not just subcommand) is printed.
+     * Creates a string representing the "base command"
+     * For subcommands, this includes all of the parent commands.
      *
-     * @param prefix The prefix to put in the message
+     * @param prefix The prefix to put before the command
      */
-    getUsage(prefix) {
-        var _a, _b;
+    getBaseCommand(prefix) {
         var baseCommand = "";
         var parent = this;
         while (parent) {
             baseCommand = `${parent.label} ${baseCommand}`;
             parent = parent.parent;
         }
-        return `${prefix}${baseCommand} ${((_b = (_a = this.options) === null || _a === void 0 ? void 0 : _a.arguments) === null || _b === void 0 ? void 0 : _b.map(a => `<${a.name || "?"} (${a.type})>`).join(" ")) || ""}`;
+        return prefix + baseCommand;
+    }
+    /**
+     * Adds a prefix to every usage this command has.
+     */
+    getUsagePrefixed(prefix) {
+        var _a, _b;
+        return (_b = (_a = this.options) === null || _a === void 0 ? void 0 : _a.usages) === null || _b === void 0 ? void 0 : _b.map(u => prefix + u);
     }
     /**
      * Creates an embed documenting this command (and its subcommands, etc.) usage.
      * @param msg Message requesting the embed, used to resolve the prefix
      */
     createEmbed(msg) {
-        var _a, _b;
+        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
             const prefix = (yield this.bot.resolvePrefix(msg))[0].replace("`", "\\`");
             var embed = {
@@ -137,11 +141,13 @@ class Command {
                 description: ((_a = this.options) === null || _a === void 0 ? void 0 : _a.description) || "*No description.*",
                 fields: []
             };
-            embed.fields.push({
-                name: "Usage",
-                value: this.getUsage(prefix)
-            });
-            if ((_b = this.options) === null || _b === void 0 ? void 0 : _b.aliases) {
+            if ((_b = this.options) === null || _b === void 0 ? void 0 : _b.usages) {
+                embed.fields.push({
+                    name: "Usage",
+                    value: this.getUsagePrefixed(prefix).join("\n")
+                });
+            }
+            if ((_c = this.options) === null || _c === void 0 ? void 0 : _c.aliases) {
                 embed.fields.push({
                     name: "Aliases",
                     value: this.options.aliases.map(a => `${prefix}${a}`).join(", ")
@@ -151,7 +157,10 @@ class Command {
             if (subCommands.length) {
                 embed.fields.push({
                     name: "Subcomands",
-                    value: subCommands.map(s => s.getUsage(prefix)).join("\n")
+                    value: subCommands.map(s => {
+                        const usage = s.getUsagePrefixed(prefix);
+                        return `**${s.getBaseCommand(prefix)}**${usage ? ("\n" + usage.map(u => "  • " + u).join("\n")) : ""}`;
+                    }).join("\n")
                 });
             }
             return embed;

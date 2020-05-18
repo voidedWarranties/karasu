@@ -44,6 +44,10 @@ export interface CommandOptions {
      * and returning a boolean indicating whether the user meets the requirements.
      */
     requirements?: Function;
+    /**
+     * A list of strings representing how to use this command.
+     */
+    usages?: string[];
 }
 
 export interface Argument {
@@ -175,14 +179,12 @@ export abstract class Command {
     }
 
     /**
-     * Creates a string for the usage of the command,
-     * based on the arguments declared and their names.
-     * If executed on a subcommand, the parent is found recursively
-     * to make sure the entire command (and not just subcommand) is printed.
+     * Creates a string representing the "base command"
+     * For subcommands, this includes all of the parent commands.
      * 
-     * @param prefix The prefix to put in the message
+     * @param prefix The prefix to put before the command
      */
-    getUsage(prefix: string) {
+    getBaseCommand(prefix: string) {
         var baseCommand = "";
         var parent: Command = this;
         while (parent) {
@@ -190,7 +192,14 @@ export abstract class Command {
             parent = parent.parent;
         }
 
-        return `${prefix}${baseCommand} ${this.options?.arguments?.map(a => `<${a.name || "?"} (${a.type})>`).join(" ") || ""}`;
+        return prefix + baseCommand;
+    }
+
+    /**
+     * Adds a prefix to every usage this command has.
+     */
+    getUsagePrefixed(prefix: string) {
+        return this.options?.usages?.map(u => prefix + u);
     }
 
     /**
@@ -206,10 +215,12 @@ export abstract class Command {
             fields: []
         };
 
-        embed.fields.push({
-            name: "Usage",
-            value: this.getUsage(prefix)
-        });
+        if (this.options?.usages) {
+            embed.fields.push({
+                name: "Usage",
+                value: this.getUsagePrefixed(prefix).join("\n")
+            });
+        }
 
         if (this.options?.aliases) {
             embed.fields.push({
@@ -223,7 +234,10 @@ export abstract class Command {
         if (subCommands.length) {
             embed.fields.push({
                 name: "Subcomands",
-                value: subCommands.map(s => s.getUsage(prefix)).join("\n")
+                value: subCommands.map(s => {
+                    const usage = s.getUsagePrefixed(prefix);
+                    return `**${s.getBaseCommand(prefix)}**${usage ? ("\n" + usage.map(u => "  • " + u).join("\n")) : ""}`
+                }).join("\n")
             });
         }
 
