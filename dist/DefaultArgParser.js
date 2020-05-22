@@ -60,7 +60,7 @@ function parseUser(msg, given) {
         else {
             id = given;
         }
-        return users.find(user => user.id === id);
+        return users.find(user => user.id === id) || (yield msg.channel.client.getRESTUser(id));
     });
 }
 exports.parseUser = parseUser;

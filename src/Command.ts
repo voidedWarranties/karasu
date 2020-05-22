@@ -236,7 +236,7 @@ export abstract class Command {
                 name: "Subcomands",
                 value: subCommands.map(s => {
                     const usage = s.getUsagePrefixed(prefix);
-                    return `**${s.getBaseCommand(prefix)}**${usage ? ("\n" + usage.map(u => "  • " + u).join("\n")) : ""}`
+                    return `**${s.getBaseCommand(prefix)}**${usage ? ("\n" + usage.map(u => "  • " + u).join("\n")) : ""}`;
                 }).join("\n")
             });
         }

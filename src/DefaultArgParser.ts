@@ -46,5 +46,5 @@ export async function parseUser(msg: Eris.Message, given: string) {
         id = given;
     }
 
-    return users.find(user => user.id === id);
+    return users.find(user => user.id === id) || await msg.channel.client.getRESTUser(id);
 }
