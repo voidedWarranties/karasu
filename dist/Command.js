@@ -133,7 +133,7 @@ class Command {
      * @param msg Message requesting the embed, used to resolve the prefix
      */
     createEmbed(msg) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d;
         return __awaiter(this, void 0, void 0, function* () {
             const prefix = (yield this.bot.resolvePrefix(msg))[0].replace("`", "\\`");
             var embed = {
@@ -153,8 +153,8 @@ class Command {
                     value: this.options.aliases.map(a => `${prefix}${a}`).join(", ")
                 });
             }
-            const subCommands = this.getSubcommands().filter(c => { var _a; return !((_a = c.options) === null || _a === void 0 ? void 0 : _a.ownerOnly); });
-            if (subCommands.length) {
+            const subCommands = (_d = this.getSubcommands()) === null || _d === void 0 ? void 0 : _d.filter(c => { var _a; return !((_a = c.options) === null || _a === void 0 ? void 0 : _a.ownerOnly); });
+            if (subCommands && subCommands.length) {
                 embed.fields.push({
                     name: "Subcomands",
                     value: subCommands.map(s => {

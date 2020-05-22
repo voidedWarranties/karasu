@@ -229,9 +229,9 @@ export abstract class Command {
             });
         }
 
-        const subCommands = this.getSubcommands().filter(c => !c.options?.ownerOnly);
+        const subCommands = this.getSubcommands()?.filter(c => !c.options?.ownerOnly);
 
-        if (subCommands.length) {
+        if (subCommands && subCommands.length) {
             embed.fields.push({
                 name: "Subcomands",
                 value: subCommands.map(s => {
