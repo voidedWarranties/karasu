@@ -12,7 +12,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.parseUser = void 0;
 const timestring_1 = __importDefault(require("timestring"));
 const util_1 = require("./util");
 exports.default = {
@@ -25,6 +24,7 @@ exports.default = {
         }
     },
     user: parseUser,
+    channel: parseChannel,
     number: function (_, given) {
         if (isNaN(+given)) {
             return;
@@ -35,32 +35,60 @@ exports.default = {
     },
     string: function (_, given) {
         return given;
+    },
+    message: function (msg, given) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!isNaN(+given)) {
+                try {
+                    return yield msg.channel.getMessage(given);
+                }
+                catch (_a) {
+                    return;
+                }
+            }
+        });
     }
 };
-const pingExp = /<@!?\d+>/;
 function parseUser(msg, given) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const users = ((_a = msg.member) === null || _a === void 0 ? void 0 : _a.guild.members) || msg.channel.client.users;
-        var id;
-        if (isNaN(+given)) {
-            if (pingExp.test(given)) {
-                id = given.replace(/[<@!>]/g, "");
-            }
-            else {
-                const results = users.filter(user => util_1.equalsCaseInsensitive(user.username, given) || (user.nickname && util_1.equalsCaseInsensitive(user.nickname, given)));
-                if (results.length === 1) {
-                    return results[0];
-                }
-                else {
-                    return;
-                }
-            }
+        const id = getSnowflake(/<@!?\d+>/, /[<@!>]/g, given);
+        if (id) {
+            return users.find(user => user.id === id) || (yield msg.channel.client.getRESTUser(id));
         }
         else {
-            id = given;
+            const results = users.filter(user => util_1.equalsCaseInsensitive(user.username, given) || (user.nickname && util_1.equalsCaseInsensitive(user.nickname, given)));
+            if (results.length === 1) {
+                return results[0];
+            }
         }
-        return users.find(user => user.id === id) || (yield msg.channel.client.getRESTUser(id));
     });
 }
-exports.parseUser = parseUser;
+function parseChannel(msg, given) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!msg.guildID)
+            return;
+        const channels = msg.member.guild.channels;
+        const id = getSnowflake(/<#\d+>/, /[<#>]/g, given);
+        if (id) {
+            return channels.find(channel => channel.id === id);
+        }
+        else {
+            const results = channels.filter(channel => util_1.equalsCaseInsensitive(channel.name, given));
+            if (results.length === 1) {
+                return results[0];
+            }
+        }
+    });
+}
+function getSnowflake(exp, filter, given) {
+    if (isNaN(+given)) {
+        if (exp.test(given)) {
+            return given.replace(filter, "");
+        }
+    }
+    else {
+        return given;
+    }
+}
