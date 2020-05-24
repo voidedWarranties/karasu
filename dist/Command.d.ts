@@ -31,6 +31,10 @@ export interface CommandOptions {
      */
     ownerOnly?: boolean;
     /**
+     * Whether this command can only be run in guilds
+     */
+    guildOnly?: boolean;
+    /**
      * A list of discord permissions required to run this command.
      * A list of permission strings is here: [Eris docs](https://abal.moe/Eris/docs/reference)
      */

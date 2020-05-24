@@ -43,38 +43,34 @@ class Command {
      * @param args Raw arguments with no parsing
      */
     exec(msg, args) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
         return __awaiter(this, void 0, void 0, function* () {
             if (((_a = this.options) === null || _a === void 0 ? void 0 : _a.ownerOnly) && this.bot.extendedOptions.owner !== msg.author.id) {
-                msg.channel.createMessage("Only the bot owner can use this command.");
-                return;
+                return "Only the bot owner can use this command.";
             }
-            if ((_b = this.options) === null || _b === void 0 ? void 0 : _b.requirements) {
+            if ((((_b = this.options) === null || _b === void 0 ? void 0 : _b.permissions) || ((_c = this.options) === null || _c === void 0 ? void 0 : _c.guildOnly)) && !msg.guildID) {
+                return "This command only works in guilds!";
+            }
+            if ((_d = this.options) === null || _d === void 0 ? void 0 : _d.requirements) {
                 if (!this.options.requirements(msg)) {
-                    msg.channel.createMessage("You do not meet the requirements to run this command.");
-                    return;
+                    return "You do not meet the requirements to run this command.";
                 }
             }
-            if ((_c = this.options) === null || _c === void 0 ? void 0 : _c.permissions) {
-                if (!msg.member) {
-                    msg.channel.createMessage("This command cannot be used outside of guilds.");
-                    return;
-                }
-                const hasAllPerms = (_d = this.options) === null || _d === void 0 ? void 0 : _d.permissions.every(p => msg.member.permission.has(p));
+            if ((_e = this.options) === null || _e === void 0 ? void 0 : _e.permissions) {
+                const hasAllPerms = (_f = this.options) === null || _f === void 0 ? void 0 : _f.permissions.every(p => msg.member.permission.has(p));
                 if (!hasAllPerms) {
-                    msg.channel.createMessage(`You do not have the reuquired permissions to run this command! (${(_e = this.options) === null || _e === void 0 ? void 0 : _e.permissions.join(", ")})`);
-                    return;
+                    return `You do not have the reuquired permissions to run this command! (${(_g = this.options) === null || _g === void 0 ? void 0 : _g.permissions.join(", ")})`;
                 }
             }
-            if (((_g = (_f = this.options) === null || _f === void 0 ? void 0 : _f.subCommands) === null || _g === void 0 ? void 0 : _g.length) > 0) {
+            if (((_j = (_h = this.options) === null || _h === void 0 ? void 0 : _h.subCommands) === null || _j === void 0 ? void 0 : _j.length) > 0) {
                 const subCommand = args[0];
                 if (subCommand) {
-                    const handler = (_j = (_h = this.options) === null || _h === void 0 ? void 0 : _h.subCommands) === null || _j === void 0 ? void 0 : _j.find(c => c.handles(subCommand));
+                    const handler = (_l = (_k = this.options) === null || _k === void 0 ? void 0 : _k.subCommands) === null || _l === void 0 ? void 0 : _l.find(c => c.handles(subCommand));
                     if (handler)
                         return handler.exec(msg, args.slice(1));
                 }
             }
-            if ((_k = this.options) === null || _k === void 0 ? void 0 : _k.arguments) {
+            if ((_m = this.options) === null || _m === void 0 ? void 0 : _m.arguments) {
                 const result = yield util_1.parseArgs(this.bot, msg, this.options.arguments, args);
                 if (!result)
                     return;

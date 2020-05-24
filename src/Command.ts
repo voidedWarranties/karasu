@@ -35,6 +35,10 @@ export interface CommandOptions {
      */
     ownerOnly?: boolean;
     /**
+     * Whether this command can only be run in guilds
+     */
+    guildOnly?: boolean;
+    /**
      * A list of discord permissions required to run this command.
      * A list of permission strings is here: [Eris docs](https://abal.moe/Eris/docs/reference)
      */
@@ -105,28 +109,24 @@ export abstract class Command {
      */
     async exec(msg: Eris.Message, args: string[]) {
         if (this.options?.ownerOnly && this.bot.extendedOptions.owner !== msg.author.id) {
-            msg.channel.createMessage("Only the bot owner can use this command.");
-            return;
+            return "Only the bot owner can use this command.";
+        }
+
+        if ((this.options?.permissions || this.options?.guildOnly) && !msg.guildID) {
+            return "This command only works in guilds!";
         }
 
         if (this.options?.requirements) {
             if (!this.options.requirements(msg)) {
-                msg.channel.createMessage("You do not meet the requirements to run this command.");
-                return;
+                return "You do not meet the requirements to run this command.";
             }
         }
 
         if (this.options?.permissions) {
-            if (!msg.member) {
-                msg.channel.createMessage("This command cannot be used outside of guilds.");
-                return;
-            }
-
             const hasAllPerms = this.options?.permissions.every(p => msg.member.permission.has(p));
 
             if (!hasAllPerms) {
-                msg.channel.createMessage(`You do not have the reuquired permissions to run this command! (${this.options?.permissions.join(", ")})`);
-                return;
+                return `You do not have the reuquired permissions to run this command! (${this.options?.permissions.join(", ")})`;
             }
         }
 
