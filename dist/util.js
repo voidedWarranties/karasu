@@ -69,9 +69,14 @@ function parseArgs(client, msg, declared, given) {
         const parsedArgs = [];
         for (const idx in declared) {
             const arg = declared[idx];
-            if (!given[0] && !arg.optional) {
-                msg.channel.createMessage(`Not enough arguments, ${declared.length} required`);
-                return;
+            if (!given[0]) {
+                if (arg.optional) {
+                    continue;
+                }
+                else {
+                    msg.channel.createMessage(`Not enough arguments, ${declared.length} required`);
+                    return;
+                }
             }
             if (!client.argParsers[arg.type])
                 throw new ReferenceError(`Parser for argument type ${arg.type} does not exist.`);
