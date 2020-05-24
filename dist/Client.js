@@ -28,6 +28,7 @@ const another_logger_1 = __importDefault(require("another-logger"));
 const util_1 = require("./util");
 const DefaultArgParser_1 = __importDefault(require("./DefaultArgParser"));
 const HelpCommand_1 = __importDefault(require("./HelpCommand"));
+const chokidar_1 = __importDefault(require("chokidar"));
 class Client extends eris_1.default.Client {
     /**
      * Creates a new bot client.
@@ -39,6 +40,7 @@ class Client extends eris_1.default.Client {
         super(token, Object.assign(options, {
             restMode: true
         }));
+        this.registeredEvents = [];
         this.extendedOptions = extendedOptions;
         this.commandRegistry = new CommandRegistry_1.default(this);
         this.log = extendedOptions.logger || new another_logger_1.default({
@@ -71,12 +73,8 @@ class Client extends eris_1.default.Client {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 for (var _b = __asyncValues(util_1.iterateImport(directory)), _c; _c = yield _b.next(), !_c.done;) {
-                    const { obj } = _c.value;
-                    for (const [key, value] of Object.entries(obj)) {
-                        if (typeof value === "function") {
-                            this.on(key, value.bind(this));
-                        }
-                    }
+                    const { obj, entryPath } = _c.value;
+                    this.addEventsFrom(entryPath, obj);
                 }
             }
             catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -86,7 +84,32 @@ class Client extends eris_1.default.Client {
                 }
                 finally { if (e_1) throw e_1.error; }
             }
+            if (this.extendedOptions.development) {
+                chokidar_1.default.watch(directory).on("change", path => {
+                    this.log.info(`Reloading event in ${path}`);
+                    delete require.cache[require.resolve(path)];
+                    const events = this.registeredEvents.filter(e => e.file === path);
+                    for (const event of events) {
+                        this.off(event.event, event.handler);
+                    }
+                    this.addEventsFrom(path, require(path));
+                });
+            }
         });
+    }
+    /**
+     * Adds events from an object with the key being the event name, and the value being the handler.
+     * @param path The file path the event was resolved from
+     * @param obj Object to add events from
+     */
+    addEventsFrom(path, obj) {
+        for (const [key, value] of Object.entries(obj)) {
+            if (typeof value === "function") {
+                const handler = value.bind(this);
+                this.on(key, handler);
+                this.registeredEvents.push({ file: path, event: key, handler });
+            }
+        }
     }
     /**
      * Resolves the prefix for any given message.

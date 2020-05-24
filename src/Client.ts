@@ -6,6 +6,7 @@ import Logger from "another-logger";
 import { iterateImport } from "./util";
 import defaultArgParser from "./DefaultArgParser";
 import HelpCommand from "./HelpCommand";
+import chokidar from "chokidar";
 
 /**
  * Additional options required by this library.
@@ -82,6 +83,7 @@ export class Client extends Eris.Client {
     commandRegistry: CommandRegistry;
     log: Logger;
     argParsers: object;
+    private registeredEvents: { file: string, event: string, handler: (...args: any[]) => {} }[] = [];
 
     /**
      * Creates a new bot client.
@@ -128,11 +130,38 @@ export class Client extends Eris.Client {
      * @param directory Directory to register all events from
      */
     async addEventsIn(directory: string) {
-        for await (const { obj } of iterateImport(directory)) {
-            for (const [key, value] of Object.entries(obj)) {
-                if (typeof value === "function") {
-                    this.on(key, value.bind(this));
+        for await (const {obj, entryPath} of iterateImport(directory)) {
+            this.addEventsFrom(entryPath, obj);
+        }
+
+        if (this.extendedOptions.development) {
+            chokidar.watch(directory).on("change", path => {
+                this.log.info(`Reloading event in ${path}`);
+
+                delete require.cache[require.resolve(path)];
+
+                const events = this.registeredEvents.filter(e => e.file === path);
+
+                for (const event of events) {
+                    this.off(event.event, event.handler);
                 }
+
+                this.addEventsFrom(path, require(path));
+            });
+        }
+    }
+
+    /**
+     * Adds events from an object with the key being the event name, and the value being the handler.
+     * @param path The file path the event was resolved from
+     * @param obj Object to add events from
+     */
+    private addEventsFrom(path: string, obj: object) {
+        for (const [key, value] of Object.entries(obj)) {
+            if (typeof value === "function") {
+                const handler = value.bind(this);
+                this.on(key, handler);
+                this.registeredEvents.push({ file: path, event: key, handler });
             }
         }
     }

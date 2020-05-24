@@ -72,6 +72,7 @@ export declare class Client extends Eris.Client {
     commandRegistry: CommandRegistry;
     log: Logger;
     argParsers: object;
+    private registeredEvents;
     /**
      * Creates a new bot client.
      * @param token The bot token. Store inside a .env or private configuration file, ideally.
@@ -96,6 +97,12 @@ export declare class Client extends Eris.Client {
      * @param directory Directory to register all events from
      */
     addEventsIn(directory: string): Promise<void>;
+    /**
+     * Adds events from an object with the key being the event name, and the value being the handler.
+     * @param path The file path the event was resolved from
+     * @param obj Object to add events from
+     */
+    private addEventsFrom;
     /**
      * Resolves the prefix for any given message.
      * Uses {@link ExtendedOptions.prefix} to find the prefix
