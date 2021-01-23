@@ -23,7 +23,8 @@ export async function* iterateImport(directory: string) {
 }
 
 export async function parseArgs(client: Client, msg: Eris.Message, declared: Argument[], given: string[]) {
-    const parsedArgs = [];
+    // const parsedArgs = [];
+    const parsedArgs = {};
 
     for (const idx in declared) {
         const arg = declared[idx];
@@ -45,11 +46,9 @@ export async function parseArgs(client: Client, msg: Eris.Message, declared: Arg
             if (!arg.optional) {
                 msg.channel.createMessage(`Argument ${idx}: Required type ${arg.type}`);
                 return;
-            } else {
-                parsedArgs.push(undefined);
             }
         } else {
-            parsedArgs.push(parsed);
+            parsedArgs[arg.name] = parsed;
             given.shift();
         }
     }

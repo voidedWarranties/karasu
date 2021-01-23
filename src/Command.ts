@@ -61,9 +61,10 @@ export interface Argument {
      */
     type: string;
     /**
-     * The name of the argument, to be used in the default help command
+     * The name of the argument, to be used in the parser output
+     * and for the default help command
      */
-    name?: string;
+    name: string;
     /**
      * Whether this argument is optional
      */
@@ -151,7 +152,7 @@ export abstract class Command {
         return this.run(msg, args);
     }
 
-    abstract run(msg: Eris.Message, args: string[], parsed?: any[]): void | Promise<void> | string | Promise<string>;
+    abstract run(msg: Eris.Message, args: string[], parsed?: any): void | Promise<void> | string | Promise<string>;
 
     /**
      * Determines whether this command should handle
