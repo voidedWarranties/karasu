@@ -19,7 +19,7 @@ export default class HelpCommand extends Command {
         const prefix = (await this.bot.resolvePrefix(msg))[0].replace("`", "\\`");
 
         if (categories.length) {
-            var embed = {
+            let embed = {
                 title: "Help",
                 fields: []
             };

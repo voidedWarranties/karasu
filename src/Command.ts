@@ -169,7 +169,7 @@ export abstract class Command {
     getSubcommands() {
         if (!this.options?.subCommands) return;
 
-        var subCommands = this.options.subCommands;
+        let subCommands = this.options.subCommands;
 
         for (const command of subCommands) {
             subCommands = subCommands.concat(command.getSubcommands() || []);
@@ -185,8 +185,8 @@ export abstract class Command {
      * @param prefix The prefix to put before the command
      */
     getBaseCommand(prefix: string) {
-        var baseCommand = "";
-        var parent: Command = this;
+        let baseCommand = "";
+        let parent: Command = this;
         while (parent) {
             baseCommand = `${parent.label} ${baseCommand}`;
             parent = parent.parent;
@@ -209,7 +209,7 @@ export abstract class Command {
     async createEmbed(msg: Eris.Message) {
         const prefix = (await this.bot.resolvePrefix(msg))[0].replace("`", "\\`");
 
-        var embed = {
+        const embed = {
             title: `${prefix}${this.label}`,
             description: this.options?.description || "*No description.*",
             fields: []

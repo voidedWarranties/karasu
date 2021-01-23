@@ -100,7 +100,7 @@ export class Client extends Eris.Client {
 
         this.commandRegistry = new CommandRegistry(this);
 
-        this.log = extendedOptions.logger || new Logger({
+        this.log = extendedOptions.logger || new (Logger as any)({
             ignoredLevels: this.extendedOptions.development ? [] : ["debug"]
         });
 
@@ -173,7 +173,7 @@ export class Client extends Eris.Client {
      */
     async resolvePrefix(msg: Eris.Message) {
         const prefixResolvable = this.extendedOptions.prefix;
-        var prefix = typeof prefixResolvable === "function" ? await prefixResolvable(msg) : [prefixResolvable];
+        const prefix = typeof prefixResolvable === "function" ? await prefixResolvable(msg) : [prefixResolvable];
 
         return prefix.map(p => p.replace("@mention", this.user.mention));
     }

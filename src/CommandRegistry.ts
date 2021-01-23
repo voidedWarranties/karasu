@@ -31,7 +31,7 @@ export default class CommandRegistry {
                         this.bot.log.info(`Reloading command in: ${entryPath}`);
                         delete require.cache[require.resolve(entryPath)];
 
-                        var CommandConstructor = require(entryPath);
+                        let CommandConstructor = require(entryPath);
                         if (CommandConstructor.default) CommandConstructor = CommandConstructor.default;
 
                         const commandInstance = new CommandConstructor(this.bot);

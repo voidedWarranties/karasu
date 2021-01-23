@@ -11,7 +11,7 @@ export function equalsCaseInsensitive(a: string, b: string) {
 export async function* iterateImport(directory: string) {
     for await (const entry of readdirp(directory, { fileFilter: "*.js" })) {
         const entryPath = path.join(directory, entry.path);
-        var obj = require(entryPath);
+        let obj = require(entryPath);
 
         if (obj.default) obj = obj.default;
 
