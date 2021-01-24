@@ -127,7 +127,7 @@ export abstract class Command {
             const hasAllPerms = this.options?.permissions.every(p => msg.member.permission.has(p));
 
             if (!hasAllPerms) {
-                return `You do not have the reuquired permissions to run this command! (${this.options?.permissions.join(", ")})`;
+                return `You do not have the required permissions to run this command! (${this.options?.permissions.join(", ")})`;
             }
         }
 
