@@ -8,7 +8,7 @@
   ],
   "license": "WTFPL",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --skipLibCheck",
     "lint": "eslint . --fix",
     "docs": "typedoc --out docs src"
   },
