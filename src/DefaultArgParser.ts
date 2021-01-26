@@ -30,7 +30,8 @@ export default {
                 return;
             }
         }
-    }
+    },
+    role: parseRole
 };
 
 async function parseUser(msg: Eris.Message, given: string) {
@@ -60,6 +61,24 @@ async function parseChannel(msg: Eris.Message, given: string) {
         return channels.find(channel => channel.id === id);
     } else {
         const results = channels.filter(channel => equalsCaseInsensitive(channel.name, given));
+
+        if (results.length === 1) {
+            return results[0];
+        }
+    }
+}
+
+async function parseRole(msg: Eris.Message, given: string) {
+    if (!msg.guildID) return;
+
+    const roles = msg.member.guild.roles;
+
+    const id = getSnowflake(/<@&\d+>/, /[<@&>]/g, given);
+
+    if (id) {
+        return roles.find(r => r.id === id);
+    } else {
+        const results = roles.filter(r => equalsCaseInsensitive(r.name, given.replace(/["']/g, "")));
 
         if (results.length === 1) {
             return results[0];
