@@ -1,6 +1,7 @@
 import timestring from "timestring";
 import Eris from "eris";
 import { equalsCaseInsensitive } from "./util";
+import { Argument } from "./Command";
 
 export default {
     time: function (_, given: string) {
@@ -31,7 +32,17 @@ export default {
             }
         }
     },
-    role: parseRole
+    role: parseRole,
+    option: {
+        parse: parseOption,
+        getName(arg: Argument, useName: Boolean = false) {
+            const validatorString = typeof arg.validator === "function" ?
+                "check help usages" :
+                arg.validator.map(v => typeof v === "string" ? v : v.value).join("/");
+
+            return `${useName ? arg.name : arg.type}: ${validatorString}`;
+        }
+    }
 };
 
 async function parseUser(msg: Eris.Message, given: string) {
@@ -83,6 +94,24 @@ async function parseRole(msg: Eris.Message, given: string) {
         if (results.length === 1) {
             return results[0];
         }
+    }
+}
+
+async function parseOption(_, given: string, arg: Argument) {
+    if (!arg.validator) throw new TypeError("No validator was given to an option type argument.");
+
+    if (typeof arg.validator === "function" && arg.validator(given)) {
+        return given;
+    }
+
+    if (Array.isArray(arg.validator)) {
+        if (arg.validator.includes(given))
+            return given;
+
+        const validator = arg.validator.find(v => v.aliases && v.aliases.includes(given));
+
+        if (validator)
+            return validator.value;
     }
 }
 

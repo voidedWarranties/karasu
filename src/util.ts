@@ -32,18 +32,21 @@ export async function parseArgs(client: Client, msg: Eris.Message, declared: Arg
             if (arg.optional) {
                 continue;
             } else {
-                msg.channel.createMessage(`Not enough arguments, ${declared.length} required`);
+                msg.channel.createMessage(`Not enough arguments, ${declared.filter(a => !a.optional).length} required`);
                 return;
             }
         }
 
         if (!client.argParsers[arg.type]) throw new ReferenceError(`Parser for argument type ${arg.type} does not exist.`);
-        
-        const parsed = await client.argParsers[arg.type](msg, given[0]);
+
+        const parserObj = client.argParsers[arg.type];
+        const parse = typeof parserObj === "function" ? parserObj : parserObj.parse;
+
+        const parsed = await parse(msg, given[0], arg);
 
         if (!parsed) {
             if (!arg.optional) {
-                msg.channel.createMessage(`Argument ${idx}: Required type ${arg.type}`);
+                msg.channel.createMessage(`Argument ${idx}: Required type ${parserObj.getName ? parserObj.getName(arg) : arg.type}`);
                 return;
             }
         } else {

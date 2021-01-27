@@ -39,11 +39,14 @@ export interface ExtendedOptions {
      * 
      * Every object key should be the name of a parser, included for use in {@link CommandOptions.arguments}
      * 
+     * The value should be a function, or an object with keys `parse`, a function to parse the argument,
+     * and `getName`, to be used when an argument is considered invalid.
+     *
      * Each function should take in an Eris message and one argument string, and return undefined if the argument was invalid,
      * or the value to be included in the parsed arguments.
      */
     argParsers?: {
-        [key: string]: Function
+        [key: string]: Function | object
     },
     /**
      * A list of command categories to be included in the default help command.
