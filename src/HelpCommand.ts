@@ -6,14 +6,18 @@ import { Client } from "./Client";
 
 export default class HelpCommand extends Command {
     constructor(bot: Client) {
-        super(bot, "help", {
-            subCommands: [
-                new CommandSubCommand(bot)
-            ]
-        });
+        super(bot, "help");
     }
 
-    async run(msg: Eris.Message) {
+    async run(msg: Eris.Message, args: string[]) {
+        if (args.length > 0) {
+            const command = this.bot.commandRegistry.resolve(args[0]);
+            if (!command) return "No command found.";
+
+            msg.channel.createMessage({ embed: await command.createEmbed(msg) });
+            return;
+        }
+
         const categories = this.bot.extendedOptions.categories;
         const commands = this.bot.commandRegistry.commands;
         const prefix = (await this.bot.resolvePrefix(msg))[0].replace("`", "\\`");
@@ -46,20 +50,5 @@ ${commands.filter(c => c.options?.category === category.id && !c.options?.ownerO
 
             msg.channel.createMessage({ embed });
         }
-    }
-}
-
-class CommandSubCommand extends Command {
-    constructor(bot: Client) {
-        super(bot, "command", {
-            aliases: ["cmd"]
-        });
-    }
-
-    async run(msg: Eris.Message, args: string[]) {
-        const command = this.bot.commandRegistry.resolve(args[0]);
-        if (!command) return "No command found.";
-
-        msg.channel.createMessage({ embed: await command.createEmbed(msg) });
     }
 }
