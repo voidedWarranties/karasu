@@ -50,6 +50,8 @@ export interface CommandOptions {
     requirements?: Function;
     /**
      * A list of strings representing how to use this command.
+     * If none are provided, one will automatically be generated based on the declared arguments.
+     * Automatic generation should be avoided unless `args` is not used.
      */
     usages?: string[];
 }
@@ -204,6 +206,23 @@ export abstract class Command {
     }
 
     /**
+     * Automatically creates a usage string based off of the declared arguments.
+     */
+    getAutoUsageString(prefix: string) {
+        let usage = this.getBaseCommand(prefix);
+
+        if (!this.options?.arguments) return null;
+
+        for (const argument of this.options.arguments) {
+            const surround = argument.optional ? ["(", ")"] : ["<", ">"];
+
+            usage += ` ${surround[0]}${argument.name}${surround[1]}`;
+        }
+
+        return usage;
+    }
+
+    /**
      * Creates an embed documenting this command (and its subcommands, etc.) usage.
      * @param msg Message requesting the embed, used to resolve the prefix
      */
@@ -220,6 +239,11 @@ export abstract class Command {
             embed.fields.push({
                 name: "Usage",
                 value: this.getUsagePrefixed(prefix).join("\n")
+            });
+        } else if (this.options?.arguments) {
+            embed.fields.push({
+                name: "Usage",
+                value: this.getAutoUsageString(prefix)
             });
         }
 
