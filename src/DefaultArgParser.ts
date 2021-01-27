@@ -108,7 +108,7 @@ async function parseOption(_, given: string, arg: Argument) {
         if (arg.validator.includes(given))
             return given;
 
-        const validator = arg.validator.find(v => v.aliases && v.aliases.includes(given));
+        const validator = arg.validator.find(v => v.value === given || (v.aliases && v.aliases.includes(given)));
 
         if (validator)
             return validator.value;
