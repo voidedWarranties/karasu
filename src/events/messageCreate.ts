@@ -2,6 +2,10 @@
 
 import Eris from "eris";
 
+function startsAndEndsWith(value: string, wrap: string) {
+    return value.startsWith(wrap) && value.endsWith(wrap);
+}
+
 export async function messageCreate(msg: Eris.Message) {
     const prefix = await this.resolvePrefix(msg);
     const content = msg.content.replace("<@!", "<@");
@@ -15,7 +19,15 @@ export async function messageCreate(msg: Eris.Message) {
     const prefixUsed = prefix.find(p => content.toUpperCase().startsWith(p.toUpperCase()));
 
     if (prefixUsed) {
-        const args = msg.content.slice(prefixUsed.length).match(/("[^\b"]*?")|('[^\b']*?')|([^\b\s]*)/g).filter(arg => arg !== "");
+        let args = msg.content.slice(prefixUsed.length).match(/("[^\b"]*?")|('[^\b']*?')|([^\b\s]*)/g).filter(arg => arg !== "");
+        args = args.map(arg => {
+            if (startsAndEndsWith(arg, "\"") || startsAndEndsWith(arg, "\'")) {
+                return arg.slice(1, -1);
+            }
+
+            return arg;
+        });
+
         const command = args.shift();
 
         if (command) {
