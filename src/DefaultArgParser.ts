@@ -39,7 +39,7 @@ export default {
     role: parseRole,
     option: {
         parse: parseOption,
-        getName(arg: Argument, useName: Boolean = false) {
+        getName(arg: OptionsArgument, useName: Boolean = false) {
             const validatorString = typeof arg.validator === "function" ?
                 "check help usages" :
                 arg.validator.map(v => typeof v === "string" ? v : v.value).join("/");
@@ -127,7 +127,19 @@ async function parseRole(msg: Eris.Message, given: string) {
     }
 }
 
-async function parseOption(_, given: string, arg: Argument) {
+interface OptionsArgument extends Argument {
+    /**
+     * Special info used by certain arg parsers to determine whether the argument is valid.
+     * validator should be:
+     * * a function, for which no automatic documentation/usage help will be provided, or
+     * * an array with elements of
+     *     * a string, just the valid option, or
+     *     * an object with keys `value` for the valid option and `aliases`, an array of alternatives
+     */
+    validator: any;
+}
+
+async function parseOption(_, given: string, arg: OptionsArgument) {
     if (!arg.validator) throw new TypeError("No validator was given to an option type argument.");
 
     if (typeof arg.validator === "function" && arg.validator(given)) {

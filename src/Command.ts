@@ -71,16 +71,6 @@ export interface Argument {
      * Whether this argument is optional
      */
     optional?: boolean;
-
-    /**
-     * Special info used by certain arg parsers to determine whether the argument is valid.
-     * validator should be:
-     * * a function, for which no automatic documentation/usage help will be provided, or
-     * * an array with elements of
-     *     * a string, just the valid option, or
-     *     * an object with keys `value` for the valid option and `aliases`, an array of alternatives
-     */
-    validator?: any;
 }
 
 export abstract class Command {
