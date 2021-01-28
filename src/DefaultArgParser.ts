@@ -12,6 +12,10 @@ export default {
         }
     },
     user: parseUser,
+    member: async function (msg: Eris.Message, given: string, arg: UserArgument) {
+        arg.forceMember = true;
+        return await parseUser(msg, given, arg);
+    },
     channel: parseChannel,
     number: function (_, given: string) {
         if (isNaN(+given)) {
@@ -45,15 +49,41 @@ export default {
     }
 };
 
-async function parseUser(msg: Eris.Message, given: string) {
-    const users = msg.member?.guild.members || msg.channel.client.users;
+interface UserArgument extends Argument {
+    /**
+     * Whether the parser should fail if a member could not be resolved,
+     * rather than falling back to finding a user.
+     */
+    forceMember?: Boolean;
+}
 
+async function parseUser(msg: Eris.Message, given: string, arg: UserArgument) {
     const id = getSnowflake(/<@!?\d+>/, /[<@!>]/g, given);
+    const client = msg.channel.client;
+
+    // If the message was sent in a guild, attempt to find a member here
+    if (msg.guildID) {
+        const guild = (msg.channel as Eris.GuildChannel).guild;
+
+        let res: Eris.Member;
+
+        if (id) {
+            res = (await guild.fetchMembers({ userIDs: [id] }))[0];
+        } else if (given.length > 3) { // Refuse to resolve member if the query is under 3 characters (for now)
+            res = (await guild.searchMembers(given, 1))[0];
+        }
+
+        // If no member is found, fallback to finding user
+        if (res || arg.forceMember)
+            return res;
+    }
 
     if (id) {
-        return users.find(user => user.id === id) || await msg.channel.client.getRESTUser(id);
+        // Attempt to return user from cache, otherwise fetch via REST
+        return client.users.find(u => u.id === id) || await client.getRESTUser(id);
     } else {
-        const results = users.filter(user => equalsCaseInsensitive(user.username, given) || (user.nickname && equalsCaseInsensitive(user.nickname, given)));
+        // Attempt to query user cache by username
+        const results = client.users.filter(user => equalsCaseInsensitive(user.username, given));
 
         if (results.length === 1) {
             return results[0];
