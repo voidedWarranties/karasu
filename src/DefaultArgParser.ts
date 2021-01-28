@@ -119,7 +119,7 @@ async function parseRole(msg: Eris.Message, given: string) {
     if (id) {
         return roles.find(r => r.id === id);
     } else {
-        const results = roles.filter(r => equalsCaseInsensitive(r.name, given.replace(/["']/g, "")));
+        const results = roles.filter(r => equalsCaseInsensitive(r.name, given));
 
         if (results.length === 1) {
             return results[0];
