@@ -71,6 +71,23 @@ export interface Argument {
      * Whether this argument is optional
      */
     optional?: boolean;
+
+    /**
+     * Whether the argument parser should parse multiple values delimited by a semicolon or provided `delimiter`.
+     * If this is true, the parser will output an array rather than a single value.
+     */
+    acceptMultiple?: boolean;
+
+    /**
+     * The maximum number of arguments to accept when `acceptMultiple` is true.
+     * Defaults to 5.
+     */
+    limit?: number;
+
+    /**
+     * The delimiter to use when `acceptMultiple` is enabled.
+     */
+    delimiter?: string;
 }
 
 export abstract class Command {

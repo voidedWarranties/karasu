@@ -42,6 +42,29 @@ export async function parseArgs(client: Client, msg: Eris.Message, declared: Arg
         const parserObj = client.argParsers[arg.type];
         const parse = typeof parserObj === "function" ? parserObj : parserObj.parse;
 
+        if (arg.acceptMultiple) {
+            const allParsed = [];
+
+            if (!given[0])
+                return;
+
+            const toParse = given.shift().split(arg.delimiter || ";");
+
+            for (let i = 0; i < Math.min(toParse.length, arg.limit || 5); i++) {
+                const parsed = await parse(msg, toParse[i], arg);
+
+                if (!parsed) {
+                    msg.channel.createMessage(`Argument ${idx}: Provided value ${toParse[i]} is invalid`);
+                    return;
+                }
+
+                allParsed.push(parsed);
+            }
+
+            parsedArgs[arg.name] = allParsed;
+            continue;
+        }
+
         const parsed = await parse(msg, given[0], arg);
 
         if (!parsed) {
