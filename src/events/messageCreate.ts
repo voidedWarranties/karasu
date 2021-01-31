@@ -16,7 +16,7 @@ export async function messageCreate(msg: Eris.Message) {
 
     if (prefixUsed) {
         const args = [];
-        const exp = /(["'])(?<qarg>[^\b]*?)\1|(?<warg>\w+)/g;
+        const exp = /(["'])(?<qarg>[^\b]*?)\1|(?<warg>\S+)/g;
         const query = msg.content.slice(prefixUsed.length);
         let match;
 
