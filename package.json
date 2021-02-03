@@ -6,7 +6,7 @@
   "files": [
     "dist/*"
   ],
-  "license": "WTFPL",
+  "license": "MIT",
   "scripts": {
     "build": "tsc --skipLibCheck",
     "lint": "eslint . --fix",
