@@ -12,9 +12,6 @@
     "lint": "eslint . --fix",
     "docs": "typedoc --out docs src"
   },
-  "peerDependencies": {
-    "eris": "^0.14.0"
-  },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.14.0",
     "@typescript-eslint/parser": "^4.14.0",
@@ -26,8 +23,12 @@
     "@types/node": "^14.14.22",
     "another-logger": "^3.0.0",
     "chokidar": "^3.5.1",
+    "eris": "^0.14.0",
     "esprima": "^4.0.1",
     "readdirp": "^3.5.0",
     "timestring": "^6.0.0"
+  },
+  "resolutions": {
+    "eris/opusscript": "abalabahaha/opusscript"
   }
 }
