@@ -1,5 +1,4 @@
 import Eris from "eris";
-require("eris-additions")(Eris);
 import CommandRegistry from "./CommandRegistry";
 import CollectorManager from "./collectors/CollectorManager";
 import path from "path";
