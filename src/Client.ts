@@ -1,6 +1,7 @@
 import Eris from "eris";
 require("eris-additions")(Eris);
 import CommandRegistry from "./CommandRegistry";
+import CollectorManager from "./collectors/CollectorManager";
 import path from "path";
 import Logger from "another-logger";
 import { iterateImport } from "./util";
@@ -84,6 +85,7 @@ export interface Logger {
 export class Client extends Eris.Client {
     extendedOptions: ExtendedOptions;
     commandRegistry: CommandRegistry;
+    collectorManager: CollectorManager;
     log: Logger;
     argParsers: object;
     private registeredEvents: { file: string, event: string, handler: (...args: any[]) => {} }[] = [];
@@ -102,6 +104,8 @@ export class Client extends Eris.Client {
         this.extendedOptions = extendedOptions;
 
         this.commandRegistry = new CommandRegistry(this);
+
+        this.collectorManager = new CollectorManager(this);
 
         this.log = extendedOptions.logger || new (Logger as any)({
             ignoredLevels: this.extendedOptions.development ? [] : ["debug"]
@@ -133,7 +137,7 @@ export class Client extends Eris.Client {
      * @param directory Directory to register all events from
      */
     async addEventsIn(directory: string) {
-        for await (const {obj, entryPath} of iterateImport(directory)) {
+        for await (const { obj, entryPath } of iterateImport(directory)) {
             this.addEventsFrom(entryPath, obj);
         }
 
