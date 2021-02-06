@@ -44,11 +44,6 @@ export interface CommandOptions {
      */
     permissions?: string[];
     /**
-     * A custom requirement function, taking in an [Eris Message](https://abal.moe/Eris/docs/Message)
-     * and returning a boolean indicating whether the user meets the requirements.
-     */
-    requirements?: Function;
-    /**
      * A list of strings representing how to use this command.
      * If none are provided, one will automatically be generated based on the declared arguments.
      * Automatic generation should be avoided unless `args` is not used.
@@ -134,12 +129,6 @@ export abstract class Command {
 
         if ((this.options?.permissions || this.options?.guildOnly) && !msg.guildID) {
             return "This command only works in guilds!";
-        }
-
-        if (this.options?.requirements) {
-            if (!this.options.requirements(msg)) {
-                return "You do not meet the requirements to run this command.";
-            }
         }
 
         if (this.options?.permissions && !force) {
