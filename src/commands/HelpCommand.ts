@@ -1,8 +1,8 @@
 /** @ignore *//** */
 
-import { Command } from "./Command";
+import { Command } from "../Command";
 import Eris from "eris";
-import { Client } from "./Client";
+import { Client } from "../Client";
 
 export default class HelpCommand extends Command {
     constructor(bot: Client) {

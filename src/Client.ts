@@ -5,8 +5,10 @@ import path from "path";
 import Logger from "another-logger";
 import { iterateImport } from "./util";
 import defaultArgParser from "./DefaultArgParser";
-import HelpCommand from "./HelpCommand";
 import chokidar from "chokidar";
+
+import HelpCommand from "./commands/HelpCommand";
+import SudoCommand from "./commands/SudoCommand";
 
 /**
  * Additional options required by this library.
@@ -116,6 +118,7 @@ export class Client extends Eris.Client {
 
         if (extendedOptions.defaultCommands) {
             this.commandRegistry.register(new HelpCommand(this));
+            this.commandRegistry.register(new SudoCommand(this));
         }
     }
 

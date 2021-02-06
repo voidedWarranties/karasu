@@ -127,7 +127,7 @@ export abstract class Command {
      * @param msg Message to be handled
      * @param args Raw arguments with no parsing
      */
-    async exec(msg: Eris.Message, args: string[]) {
+    async exec(msg: Eris.Message, args: string[], force: boolean = false) {
         if (this.options?.ownerOnly && this.bot.extendedOptions.owner !== msg.author.id) {
             return "Only the bot owner can use this command.";
         }
@@ -142,7 +142,7 @@ export abstract class Command {
             }
         }
 
-        if (this.options?.permissions) {
+        if (this.options?.permissions && !force) {
             const hasAllPerms = this.options?.permissions.every(p => msg.member.permission.has(p));
 
             if (!hasAllPerms) {
