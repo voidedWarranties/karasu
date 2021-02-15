@@ -83,6 +83,12 @@ export interface Logger {
     error: Function
 }
 
+export interface CommandContext {
+    type: string;
+    msg: Eris.Message;
+    info?: any;
+}
+
 export class Client extends Eris.Client {
     extendedOptions: ExtendedOptions;
     commandRegistry: CommandRegistry;
@@ -130,6 +136,34 @@ export class Client extends Eris.Client {
      */
     processCommandResponse(res: any): string | Eris.MessageContent {
         return res;
+    }
+
+    /**
+     * Process the declared description of a command (e.g. for localization).
+     */
+    processDescription(desc: string, guild?: Eris.Guild): string {
+        return desc;
+    }
+
+    /**
+     * Function for handling the failure of a command (permissions, etc).
+     * Any return value will be sent as a message through the defined processor.
+     * @param ctx Context of the failure (includes type and message, may include additional information)
+     */
+    async handleCommandFailed(ctx: CommandContext) {
+        switch (ctx.type) {
+            case "ownerOnly":
+                await ctx.msg.channel.createMessage("Only the bot owner can use this command.");
+                break;
+
+            case "guildOnly":
+                await ctx.msg.channel.createMessage("This command only works in guilds!");
+                break;
+
+            case "missingPerms":
+                const permissionsFormatted = ctx.info?.join(", ");
+                await ctx.msg.channel.createMessage(`You do not have the required permissions to run this command! (${permissionsFormatted})`);
+        }
     }
 
     /**

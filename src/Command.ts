@@ -128,18 +128,18 @@ export abstract class Command {
         };
 
         if (this.options?.ownerOnly && this.bot.extendedOptions.owner !== msg.author.id) {
-            return "Only the bot owner can use this command.";
+            return this.bot.handleCommandFailed({ type: "ownerOnly", msg});
         }
 
         if ((this.options?.permissions || this.options?.guildOnly) && !msg.guildID) {
-            return "This command only works in guilds!";
+            return this.bot.handleCommandFailed({ type: "guildOnly", msg })
         }
 
         if (this.options?.permissions && !force) {
             const hasAllPerms = this.options?.permissions.every(p => msg.member.permission.has(p));
 
             if (!hasAllPerms) {
-                return `You do not have the required permissions to run this command! (${this.options?.permissions.join(", ")})`;
+                return this.bot.handleCommandFailed({ type: "missingPerms", msg, info: this.options?.permissions });
             }
         }
 
@@ -250,7 +250,9 @@ export abstract class Command {
 
         const embed = {
             title: `${prefix}${this.label}`,
-            description: this.options?.description || "*No description.*",
+            description: this.options?.description ?
+                await this.bot.processDescription(this.options?.description, (msg.channel as Eris.GuildChannel).guild) :
+                "*No description.*",
             fields: []
         };
 
