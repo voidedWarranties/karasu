@@ -30,7 +30,7 @@ export async function messageCreate(msg: Eris.Message) {
             const response = await this.commandRegistry.resolve(command)?.exec(msg, args);
 
             if (response) {
-                msg.channel.createMessage(response);
+                msg.channel.createMessage(this.processCommandResponse(response));
             }
         }
     }

@@ -123,6 +123,16 @@ export class Client extends Eris.Client {
     }
 
     /**
+     * Process the return value of a command or the message received from a callback.
+     * Should be done e.g. if you put responses in an embed.
+     * Return value of commands can be anything if this is overriden.
+     * Should return a valid message body.
+     */
+    processCommandResponse(res: any): string | Eris.MessageContent {
+        return res;
+    }
+
+    /**
      * Iterates through a directory recursively, registering every event automatically.
      * Each event should be exported with its own name, not as default:
      * ```typescript

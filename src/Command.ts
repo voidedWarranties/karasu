@@ -123,6 +123,10 @@ export abstract class Command {
      * @param args Raw arguments with no parsing
      */
     async exec(msg: Eris.Message, args: string[], force: boolean = false) {
+        const respondCallback = res => {
+            return msg.channel.createMessage(this.bot.processCommandResponse(res));
+        };
+
         if (this.options?.ownerOnly && this.bot.extendedOptions.owner !== msg.author.id) {
             return "Only the bot owner can use this command.";
         }
@@ -154,13 +158,20 @@ export abstract class Command {
 
             const { given, parsed } = result;
 
-            return this.run(msg, given, parsed);
+            return this.run(msg, given, parsed, respondCallback);
         }
 
-        return this.run(msg, args);
+        return this.run(msg, args, null, respondCallback);
     }
 
-    abstract run(msg: Eris.Message, args: string[], parsed?: any): void | Promise<void> | string | Promise<string>;
+    /**
+     * Method for running command logic.
+     * @param msg Message the command was triggered by.
+     * @param args Arguments that were not parsed.
+     * @param parsed Any parsed arguments, or `null` if there are no declared arguments.
+     * @param respondCallback A callback to reply to a message in asynchronous contexts, or to reply multiple times. Returns a promise containing a message.
+     */
+    abstract run(msg: Eris.Message, args: string[], parsed: any, respondCallback: Function): void | Promise<void> | string | Promise<string>;
 
     /**
      * Determines whether this command should handle
